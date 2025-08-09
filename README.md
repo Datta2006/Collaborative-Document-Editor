@@ -3,7 +3,7 @@
 A full-stack, real-time collaborative document editor that allows multiple users to simultaneously create, edit, and share documents. The platform is built to demonstrate modern web development practices, including real-time communication, state management, and a secure API.
 
 -----
-
+Here is the demo video https://drive.google.com/file/d/1dIdPZ2DuNGKNKKwRIfHy9R1sKxSQZ0eC/view?usp=sharing
 ### Key Features
 
   * **Real-time Collaboration**: Multiple users can edit the same document simultaneously with live content synchronization and cursor position tracking.
