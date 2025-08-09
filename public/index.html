@@ -6,6 +6,7 @@
     <title>Collaborative Document Editor</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* General Styles */
         * {
             margin: 0;
             padding: 0;
@@ -13,242 +14,328 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a; /* Dark navy blue background */
             min-height: 100vh;
+            color: #e2e8f0; /* Light text for contrast */
+            line-height: 1.6;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px;
         }
 
+        /* Authentication UI */
         .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
 
         .auth-form {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: #1e293b; /* Dark slate background */
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
+            transition: all 0.3s ease;
+            border: 2px solid #334155;
+        }
+
+        .auth-form:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+            border-color: #4f46e5;
         }
 
         .auth-form h2 {
             text-align: center;
-            margin-bottom: 2rem;
-            color: #333;
+            margin-bottom: 24px;
+            color: #f8fafc;
+            font-weight: 600;
+            font-size: 24px;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
+            margin-bottom: 8px;
+            color: #94a3b8;
             font-weight: 500;
+            font-size: 14px;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
+        .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
+            padding: 12px 16px;
+            border: 2px solid #334155;
             border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            font-size: 15px;
+            transition: all 0.2s;
+            background-color: #1e293b;
+            color: #e2e8f0;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background-color: #1e293b;
         }
 
+        /* Buttons */
         .btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: #6366f1;
             color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 2px solid transparent;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            background: #4f46e5;
+            transform: translateY(-1px);
+            border-color: #4338ca;
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background: #6c757d;
-            margin-top: 1rem;
+            background: #475569;
+            border-color: #334155;
+            margin-top: 10px;
         }
 
+        .btn-secondary:hover {
+            background: #334155;
+            border-color: #1e293b;
+        }
+
+        /* Dashboard */
         .dashboard {
             display: none;
         }
 
         .header {
-            background: white;
-            padding: 1rem 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: #1e293b;
+            padding: 20px 32px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 2px solid #334155;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 16px;
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 16px;
+            border: 2px solid #4f46e5;
         }
 
         .documents-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
         .document-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
             cursor: pointer;
+            border: 2px solid #334155;
         }
 
         .document-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            border-color: #6366f1;
         }
 
         .document-card h3 {
-            color: #333;
-            margin-bottom: 1rem;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 18px;
         }
 
         .document-meta {
-            color: #666;
-            font-size: 0.9rem;
+            color: #94a3b8;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .document-meta p {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .create-document {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
+            min-height: 180px;
+            border: 2px solid #7c3aed;
         }
 
+        .create-document i {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        /* Editor UI */
         .editor-container {
             display: none;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            border: 2px solid #334155;
         }
 
         .editor-toolbar {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
+            background: #0f172a;
+            padding: 16px;
+            border-bottom: 2px solid #334155;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 16px;
         }
 
         .toolbar-group {
             display: flex;
-            gap: 0.5rem;
+            gap: 8px;
         }
 
         .toolbar-btn {
             padding: 8px 12px;
-            border: 1px solid #dee2e6;
-            background: white;
-            border-radius: 4px;
+            border: 2px solid #334155;
+            background: #1e293b;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
+            color: #94a3b8;
         }
 
-        .toolbar-btn:hover, .toolbar-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+        .toolbar-btn:hover {
+            background: #334155;
+            color: #e2e8f0;
         }
-        
+
+        .toolbar-btn.active {
+            background: #6366f1;
+            color: white;
+            border-color: #4f46e5;
+        }
+
         .toolbar-btn:disabled {
             cursor: not-allowed;
             opacity: 0.5;
+            background: #1e293b;
         }
 
         .document-title {
             flex: 1;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-right: 1rem;
+            font-size: 20px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-right: 16px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            background: #1e293b;
+            border: 2px solid #334155;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .document-title:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
 
         .collaboration-panel {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 16px;
         }
 
         .active-users {
             display: flex;
-            gap: 0.5rem;
+            gap: 8px;
         }
 
         .user-indicator {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
+            font-weight: 600;
             font-size: 12px;
             position: relative;
+            border: 2px solid #4f46e5;
         }
 
         .user-indicator.online::after {
@@ -256,21 +343,22 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 10px;
-            height: 10px;
-            background: #28a745;
-            border: 2px solid white;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border: 2px solid #4f46e5;
             border-radius: 50%;
         }
 
         .editor-content {
             display: flex;
-            height: 600px;
+            height: calc(100vh - 180px);
         }
 
         .editor-main {
             flex: 1;
-            padding: 2rem;
+            padding: 24px;
+            overflow-y: auto;
         }
 
         .editor {
@@ -279,32 +367,39 @@
             border: none;
             outline: none;
             font-size: 16px;
-            line-height: 1.6;
+            line-height: 1.8;
             resize: none;
-            font-family: 'Georgia', serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #e2e8f0;
+            background: #1e293b;
         }
-        
+
         .editor[contenteditable="false"] {
-            background-color: #f1f3f5;
+            background-color: #0f172a;
             cursor: not-allowed;
+            color: #64748b;
         }
 
         .editor-sidebar {
             width: 300px;
-            background: #f8f9fa;
-            border-left: 1px solid #e9ecef;
-            padding: 1rem;
+            background: #0f172a;
+            border-left: 2px solid #334155;
+            padding: 16px;
             overflow-y: auto;
         }
 
         .sidebar-section {
-            margin-bottom: 2rem;
+            margin-bottom: 24px;
         }
 
         .sidebar-section h4 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-size: 1rem;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .version-list {
@@ -312,39 +407,71 @@
         }
 
         .version-item {
-            padding: 0.5rem;
-            background: white;
-            margin-bottom: 0.5rem;
+            padding: 12px;
+            background: #1e293b;
+            margin-bottom: 8px;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 14px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            border: 2px solid #334155;
         }
 
         .version-item:hover {
-            background: #e9ecef;
+            background: #334155;
+            border-color: #4f46e5;
         }
 
+        .sidebar-user-item {
+            padding: 0.5rem;
+            background: #1e293b;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: 2px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sidebar-user-item .online-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Status Indicator */
         .status-indicator {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #28a745;
+            background: #10b981;
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.9rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid #059669;
         }
 
         .status-indicator.saving {
-            background: #ffc107;
+            background: #f59e0b;
+            border-color: #d97706;
         }
 
         .status-indicator.error {
-            background: #dc3545;
+            background: #ef4444;
+            border-color: #dc2626;
         }
-
+        
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -353,100 +480,178 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             overflow: auto;
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
-            background-color: white;
+            background-color: #1e293b;
             margin: 10% auto;
-            padding: 2rem;
-            border-radius: 15px;
+            padding: 32px;
+            border-radius: 12px;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            max-width: 480px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             position: relative;
+            animation: modalFadeIn 0.3s ease;
+            border: 2px solid #334155;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .close {
-            color: #aaa;
+            color: #94a3b8;
             position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 28px;
+            top: 16px;
+            right: 24px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
+            transition: color 0.2s;
         }
 
         .close:hover {
-            color: #000;
+            color: #f8fafc;
         }
 
         .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 1rem;
+            background: #7f1d1d;
+            color: #fecaca;
+            padding: 16px;
             border-radius: 8px;
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
             display: none;
+            font-size: 14px;
+            border-left: 4px solid #ef4444;
         }
 
         .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 1rem;
+            background: #14532d;
+            color: #bbf7d0;
+            padding: 16px;
             border-radius: 8px;
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
             display: none;
+            font-size: 14px;
+            border-left: 4px solid #10b981;
         }
         
+        .share-message-error {
+            background: #7f1d1d;
+            color: #fecaca;
+            border-color: #ef4444;
+        }
+
         .share-container {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        
+
         .share-container input {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
+            padding: 12px 16px;
+            border: 2px solid #334155;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
+            background-color: #1e293b;
+            color: #e2e8f0;
         }
-        
+
         #collaboratorsList {
-            margin-top: 2rem;
+            margin-top: 24px;
         }
-        
+
         #currentCollaboratorsList {
             list-style: none;
             padding: 0;
         }
-        
+
         .collaborator-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem;
-            background: #f1f3f5;
+            padding: 12px;
+            background: #1e293b;
             border-radius: 8px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
+            border: 2px solid #334155;
+            font-size: 14px;
         }
 
+        .collaborator-item span:last-child {
+            background: #312e81;
+            color: #a5b4fc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
             .editor-content {
                 flex-direction: column;
                 height: auto;
             }
-            
+
             .editor-sidebar {
                 width: 100%;
                 border-left: none;
-                border-top: 1px solid #e9ecef;
+                border-top: 2px solid #334155;
             }
-            
+
             .editor-main {
                 height: 400px;
+            }
+
+            .share-container {
+                flex-direction: column;
             }
         }
     </style>
@@ -517,7 +722,7 @@
             </div>
             
             <div class="share-container">
-                <input type="number" id="sharedDocIdInput" placeholder="Enter shared document ID" style="flex: 1; padding: 12px; border-radius: 8px;">
+                <input type="text" id="sharedDocIdInput" placeholder="Enter shared document ID" style="flex: 1; padding: 12px; border-radius: 8px;">
                 <button class="btn" onclick="openSharedDocument()" style="width: auto;">
                     <i class="fas fa-external-link-alt"></i> Open Shared Document
                 </button>
@@ -534,7 +739,7 @@
 
     <div id="editorContainer" class="container editor-container">
         <div class="editor-toolbar">
-            <div class="document-title" id="documentTitle" contenteditable="true">Untitled Document</div>
+            <div id="documentTitle" class="document-title" contenteditable="true">Untitled Document</div>
             <div class="collaboration-panel">
                 <div class="active-users" id="activeUsers"></div>
                 <button id="shareButton" class="btn" onclick="showShareDocumentModal()" style="width: auto; margin-right: 1rem;">
@@ -561,11 +766,11 @@
             <div class="toolbar-group">
                 <select class="toolbar-btn" onchange="formatText('fontSize', this.value)">
                     <option value="">Font Size</option>
-                    <option value="12px">12px</option>
-                    <option value="14px">14px</option>
-                    <option value="16px">16px</option>
-                    <option value="18px">18px</option>
-                    <option value="24px">24px</option>
+                    <option value="1">12px</option>
+                    <option value="2">14px</option>
+                    <option value="3">16px</option>
+                    <option value="4">18px</option>
+                    <option value="5">24px</option>
                 </select>
                 <select class="toolbar-btn" onchange="formatText('fontName', this.value)">
                     <option value="">Font</option>
@@ -640,7 +845,7 @@
                 <div class="form-group">
                     <label for="sharePermission">Permission</label>
                     <select id="sharePermission" class="form-group input">
-<!--                         <option value="write">Can Edit</option> -->
+                        <option value="write">Can Edit</option>
                         <option value="read">Can View</option>
                     </select>
                 </div>
@@ -667,6 +872,7 @@
         let token = localStorage.getItem('token');
         let saveTimeout = null;
         let isTyping = false;
+        let isReceivingChanges = false;
 
         // Check if user is already logged in
         if (token) {
@@ -803,6 +1009,9 @@
                 socket.on('disconnect', () => {
                     updateStatus('Disconnected', 'error');
                 });
+                
+                // Add the socket event listeners here to avoid re-adding them
+                setupSocketListeners();
             }
 
             // Load documents
@@ -830,16 +1039,16 @@
                     card.className = 'document-card';
                     card.onclick = () => openDocument(doc.id);
                     
-                    const docIdText = doc.id ? ` • ID: ${doc.id}` : '';
-                    const permissionText = doc.permission ? ` • ${doc.permission.charAt(0).toUpperCase() + doc.permission.slice(1)}` : '';
+                    const ownerText = doc.owner_id === currentUser.userId ? 'You' : doc.owner_name;
+                    const permissionText = doc.owner_id === currentUser.userId ? '' : `<p><i class="fas fa-user-friends"></i> Shared with you (${doc.permission})</p>`;
                     
                     card.innerHTML = `
                         <h3>${doc.title}</h3>
                         <div class="document-meta">
-                            <p><i class="fas fa-user"></i> ${doc.owner_name}</p>
-                            <p><i class="fas fa-clock"></i> ${new Date(doc.updated_at).toLocaleDateString()}</p>
+                            <p><i class="fas fa-user"></i> Owned by: ${ownerText}</p>
+                            <p><i class="fas fa-clock"></i> Last updated: ${new Date(doc.updated_at).toLocaleDateString()}</p>
                             <p><i class="fas fa-key"></i> ID: ${doc.id}</p>
-                            ${doc.owner_id !== currentUser.userId ? `<p><i class="fas fa-user-friends"></i> Shared with you (${doc.permission})</p>` : ''}
+                            ${permissionText}
                         </div>
                     `;
                     
@@ -878,6 +1087,7 @@
             document.getElementById('shareDocumentModal').style.display = 'none';
             document.getElementById('shareUserInput').value = '';
             document.getElementById('shareMessage').style.display = 'none';
+            document.getElementById('shareMessage').classList.remove('share-message-error');
         }
 
         document.getElementById('createDocumentForm').addEventListener('submit', async (e) => {
@@ -924,22 +1134,24 @@
 
                 const data = await response.json();
                 
+                const shareMessage = document.getElementById('shareMessage');
+                shareMessage.style.display = 'block';
+                shareMessage.classList.remove('share-message-error');
+                shareMessage.textContent = '';
+
                 if (response.ok) {
-                    document.getElementById('shareMessage').textContent = data.message;
-                    document.getElementById('shareMessage').style.display = 'block';
+                    shareMessage.textContent = data.message;
                     document.getElementById('shareUserInput').value = '';
-                    loadCurrentCollaborators(); // Refresh the collaborators list
+                    loadCurrentCollaborators();
                 } else {
-                    document.getElementById('shareMessage').textContent = data.error;
-                    document.getElementById('shareMessage').style.display = 'block';
-                    document.getElementById('shareMessage').style.backgroundColor = '#f8d7da';
-                    document.getElementById('shareMessage').style.color = '#721c24';
+                    shareMessage.textContent = data.error || 'Failed to share document.';
+                    shareMessage.classList.add('share-message-error');
                 }
             } catch (error) {
-                document.getElementById('shareMessage').textContent = 'Network error. Please try again.';
-                document.getElementById('shareMessage').style.display = 'block';
-                document.getElementById('shareMessage').style.backgroundColor = '#f8d7da';
-                document.getElementById('shareMessage').style.color = '#721c24';
+                const shareMessage = document.getElementById('shareMessage');
+                shareMessage.textContent = 'Network error. Please try again.';
+                shareMessage.style.display = 'block';
+                shareMessage.classList.add('share-message-error');
             }
         });
 
@@ -983,7 +1195,7 @@
                     currentDocument = document;
                     showEditor();
                 } else {
-                    alert('Error loading document: ' + document.error);
+                    alert('Error loading document: ' + (document.error || 'Unknown error'));
                 }
             } catch (error) {
                 alert('Network error. Please try again.');
@@ -1005,8 +1217,10 @@
             document.getElementById('mainToolbar').style.display = isWritePermission ? 'flex' : 'none';
             document.getElementById('shareButton').style.display = isWritePermission ? 'inline-block' : 'none';
 
-            // Join document room
-            socket.emit('join-document', currentDocument.id);
+            // Leave any previous document room and join the new one
+            if (socket.connected) {
+                socket.emit('join-document', currentDocument.id);
+            }
 
             // Load document versions
             loadDocumentVersions();
@@ -1019,19 +1233,17 @@
             const editor = document.getElementById('editor');
             const titleElement = document.getElementById('documentTitle');
 
-            // Document content changes
             editor.addEventListener('input', () => {
-                if (currentDocument.permission === 'write') {
+                // Only send updates if the current user has write permission and is not receiving a change
+                if (currentDocument.permission === 'write' && !isReceivingChanges) {
                     isTyping = true;
                     updateStatus('Saving...', 'saving');
 
-                    // Emit real-time changes
                     socket.emit('document-change', {
                         documentId: currentDocument.id,
                         content: editor.innerHTML
                     });
 
-                    // Debounced save
                     clearTimeout(saveTimeout);
                     saveTimeout = setTimeout(async () => {
                         await saveDocument();
@@ -1040,7 +1252,6 @@
                 }
             });
 
-            // Title changes
             titleElement.addEventListener('blur', async () => {
                 if (currentDocument.permission === 'write') {
                     const newTitle = titleElement.textContent;
@@ -1052,21 +1263,47 @@
             });
 
             // Cursor position tracking
-            editor.addEventListener('selectionchange', () => {
+            editor.addEventListener('mouseup', () => {
                 if (currentDocument.permission === 'write') {
                     const selection = window.getSelection();
                     if (selection.rangeCount > 0) {
                         const range = selection.getRangeAt(0);
+                        const position = getCaretPosition(editor);
                         socket.emit('cursor-position', {
                             documentId: currentDocument.id,
-                            position: {
-                                start: range.startOffset,
-                                end: range.endOffset
-                            }
+                            position: position
                         });
                     }
                 }
             });
+            
+            // Re-connect event listener to avoid duplicates
+            socket.off('document-change');
+            socket.on('document-change', (data) => {
+                if (data.userId !== currentUser.userId) {
+                    const editor = document.getElementById('editor');
+                    // Check if the current editor content is different from the incoming data
+                    if (editor.innerHTML !== data.content) {
+                         // Temporarily disable sending changes to prevent an infinite loop
+                        isReceivingChanges = true;
+                        editor.innerHTML = data.content;
+                        isReceivingChanges = false;
+                    }
+                }
+            });
+        }
+        
+        function getCaretPosition(element) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const preSelectionRange = range.cloneRange();
+                preSelectionRange.selectNodeContents(element);
+                preSelectionRange.setEnd(range.startContainer, range.startOffset);
+                const start = preSelectionRange.toString().length;
+                return { start: start, end: start + range.toString().length };
+            }
+            return { start: 0, end: 0 };
         }
 
         async function saveDocument(title = null) {
@@ -1078,14 +1315,15 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
                     },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         content,
-                        title: title 
+                        title: title
                     }),
                 });
 
                 if (response.ok) {
                     updateStatus('Saved', 'success');
+                    // Hide status indicator after a short delay
                     setTimeout(() => {
                         if (!isTyping) {
                             document.getElementById('statusIndicator').style.display = 'none';
@@ -1118,8 +1356,8 @@
                     
                     li.innerHTML = `
                         <div>Version ${version.version_number}</div>
-                        <div style="font-size: 0.8rem; color: #666;">
-                            ${version.created_by_name} • ${new Date(version.created_at).toLocaleDateString()}
+                        <div style="font-size: 0.8rem; color: #94a3b8;">
+                            ${version.created_by_name} • ${new Date(version.created_at).toLocaleString()}
                         </div>
                     `;
                     
@@ -1131,34 +1369,83 @@
         }
 
         function loadVersion(version) {
-            if (confirm(`Load version ${version.version_number}? This will replace the current content.`)) {
+            if (confirm(`Load version ${version.version_number} from ${version.created_by_name}? This will replace the current content.`)) {
                 document.getElementById('editor').innerHTML = version.content;
+                // Force a save after loading a version
+                if (currentDocument.permission === 'write') {
+                    saveDocument();
+                }
             }
         }
+        
+        function setupSocketListeners() {
+            socket.on('document-change', (data) => {
+                if (data.userId !== currentUser.userId) {
+                    const editor = document.getElementById('editor');
+                    isReceivingChanges = true;
+                    // Preserve focus and cursor position
+                    const selection = window.getSelection();
+                    const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+                    const cursorPosition = range ? getCaretPosition(editor) : null;
 
-        // Socket.IO event listeners
-        socket?.on('document-change', (data) => {
-            if (data.userId !== currentUser.id) {
-                document.getElementById('editor').innerHTML = data.content;
+                    editor.innerHTML = data.content;
+
+                    // Restore cursor position if possible
+                    if (cursorPosition) {
+                        setCaratPosition(editor, cursorPosition.start);
+                    }
+                    isReceivingChanges = false;
+                }
+            });
+
+            socket.on('user-joined', (user) => {
+                updateActiveUsers();
+            });
+
+            socket.on('user-left', (user) => {
+                updateActiveUsers();
+            });
+
+            socket.on('document-users', (users) => {
+                updateActiveUsers(users);
+            });
+        }
+
+        // A helper function to set the caret position, crucial for collaborative editing
+        function setCaratPosition(el, pos) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+
+            function findNodeAndOffset(node, offset, totalLength) {
+                for (let i = 0; i < node.childNodes.length; i++) {
+                    const child = node.childNodes[i];
+                    if (child.nodeType === 3) { // Text node
+                        const childLength = child.textContent.length;
+                        if (totalLength + childLength >= offset) {
+                            range.setStart(child, offset - totalLength);
+                            return;
+                        }
+                        totalLength += childLength;
+                    } else {
+                        const childLength = child.textContent.length;
+                        if (totalLength + childLength >= offset) {
+                            findNodeAndOffset(child, offset, totalLength);
+                            return;
+                        }
+                        totalLength += childLength;
+                    }
+                }
             }
-        });
 
-        socket?.on('user-joined', (user) => {
-            updateActiveUsers();
-        });
+            range.selectNodeContents(el);
+            range.collapse(true);
 
-        socket?.on('user-left', (user) => {
-            updateActiveUsers();
-        });
-
-        socket?.on('document-users', (users) => {
-            updateActiveUsers(users);
-        });
-
-        socket?.on('cursor-position', (data) => {
-            // Handle cursor position updates from other users
-            // This would require more complex implementation for visual cursors
-        });
+            let totalLength = 0;
+            findNodeAndOffset(el, pos, totalLength);
+            
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
 
         function updateActiveUsers(users = []) {
             const activeUsersContainer = document.getElementById('activeUsers');
@@ -1167,7 +1454,16 @@
             activeUsersContainer.innerHTML = '';
             sidebarUsersContainer.innerHTML = '';
 
-            users.forEach(user => {
+            // Combine both owner and collaborators into a single list
+            const allUsers = [...users, {
+                username: currentDocument.owner_name,
+                id: currentDocument.owner_id
+            }];
+            
+            const uniqueUsers = Array.from(new Set(allUsers.map(u => u.id)))
+                .map(id => allUsers.find(u => u.id === id));
+                
+            uniqueUsers.forEach(user => {
                 // Header active users
                 const userIndicator = document.createElement('div');
                 userIndicator.className = 'user-indicator online';
@@ -1177,10 +1473,10 @@
 
                 // Sidebar users
                 const userItem = document.createElement('div');
-                userItem.style.cssText = 'padding: 0.5rem; background: white; margin-bottom: 0.5rem; border-radius: 8px; font-size: 0.9rem;';
+                userItem.className = 'sidebar-user-item';
                 userItem.innerHTML = `
-                    <i class="fas fa-circle" style="color: #28a745; font-size: 0.7rem;"></i>
-                    ${user.username}
+                    <span class="online-dot"></span>
+                    <span>${user.username}</span>
                 `;
                 sidebarUsersContainer.appendChild(userItem);
             });
@@ -1191,8 +1487,18 @@
             if (currentDocument.permission === 'write') {
                 document.execCommand(command, false, value);
                 document.getElementById('editor').focus();
+                // After formatting, immediately emit the change to other users
+                socket.emit('document-change', {
+                    documentId: currentDocument.id,
+                    content: document.getElementById('editor').innerHTML
+                });
             }
         }
+        
+        // Correcting the fontSize command which uses numbers, not px values
+        document.querySelectorAll('select.toolbar-btn')[0].onchange = function() {
+            formatText('fontSize', this.value);
+        };
 
         function updateStatus(message, type) {
             const indicator = document.getElementById('statusIndicator');
