@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Document Editor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .auth-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 1rem;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .document-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .document-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .document-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .document-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .create-document {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .editor-container {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .editor-toolbar {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover, .toolbar-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .toolbar-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .document-title {
+            flex: 1;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-right: 1rem;
+        }
+
+        .collaboration-panel {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .active-users {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .user-indicator {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .user-indicator.online::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .editor-content {
+            display: flex;
+            height: 600px;
+        }
+
+        .editor-main {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: none;
+            font-family: 'Georgia', serif;
+        }
+        
+        .editor[contenteditable="false"] {
+            background-color: #f1f3f5;
+            cursor: not-allowed;
+        }
+
+        .editor-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-left: 1px solid #e9ecef;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .version-list {
+            list-style: none;
+        }
+
+        .version-item {
+            padding: 0.5rem;
+            background: white;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .version-item:hover {
+            background: #e9ecef;
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .status-indicator.saving {
+            background: #ffc107;
+        }
+
+        .status-indicator.error {
+            background: #dc3545;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .share-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .share-container input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        #collaboratorsList {
+            margin-top: 2rem;
+        }
+        
+        #currentCollaboratorsList {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .collaborator-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f1f3f5;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .editor-content {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .editor-sidebar {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #e9ecef;
+            }
+            
+            .editor-main {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="authContainer" class="auth-container">
+        <div class="auth-form">
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <div id="loginForm">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginUsername">Username or Email</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="showRegisterForm()">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+
+            <div id="registerForm" style="display: none;">
+                <h2><i class="fas fa-user-plus"></i> Register</h2>
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <label for="registerUsername">Username</label>
+                        <input type="text" id="registerUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="showLoginForm()">
+                        Back to Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard" class="dashboard">
+        <div class="container">
+            <div class="header">
+                <h1><i class="fas fa-file-alt"></i> My Documents</h1>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <span id="userName"></span>
+                    <button class="btn" onclick="logout()" style="width: auto; margin-left: 1rem;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+            
+            <div class="share-container">
+                <input type="number" id="sharedDocIdInput" placeholder="Enter shared document ID" style="flex: 1; padding: 12px; border-radius: 8px;">
+                <button class="btn" onclick="openSharedDocument()" style="width: auto;">
+                    <i class="fas fa-external-link-alt"></i> Open Shared Document
+                </button>
+            </div>
+
+            <div class="documents-grid" id="documentsGrid">
+                <div class="document-card create-document" onclick="showCreateDocumentModal()">
+                    <i class="fas fa-plus" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h3>Create New Document</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editorContainer" class="container editor-container">
+        <div class="editor-toolbar">
+            <div class="document-title" id="documentTitle" contenteditable="true">Untitled Document</div>
+            <div class="collaboration-panel">
+                <div class="active-users" id="activeUsers"></div>
+                <button id="shareButton" class="btn" onclick="showShareDocumentModal()" style="width: auto; margin-right: 1rem;">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button class="btn" onclick="backToDashboard()" style="width: auto;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </div>
+        
+        <div class="editor-toolbar" id="mainToolbar">
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="formatText('bold')" title="Bold">
+                    <i class="fas fa-bold"></i>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('italic')" title="Italic">
+                    <i class="fas fa-italic"></i>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('underline')" title="Underline">
+                    <i class="fas fa-underline"></i>
+                </button>
+            </div>
+            <div class="toolbar-group">
+                <select class="toolbar-btn" onchange="formatText('fontSize', this.value)">
+                    <option value="">Font Size</option>
+                    <option value="12px">12px</option>
+                    <option value="14px">14px</option>
+                    <option value="16px">16px</option>
+                    <option value="18px">18px</option>
+                    <option value="24px">24px</option>
+                </select>
+                <select class="toolbar-btn" onchange="formatText('fontName', this.value)">
+                    <option value="">Font</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Helvetica">Helvetica</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="formatText('justifyLeft')" title="Align Left">
+                    <i class="fas fa-align-left"></i>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('justifyCenter')" title="Align Center">
+                    <i class="fas fa-align-center"></i>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('justifyRight')" title="Align Right">
+                    <i class="fas fa-align-right"></i>
+                </button>
+            </div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="formatText('insertUnorderedList')" title="Bullet List">
+                    <i class="fas fa-list-ul"></i>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('insertOrderedList')" title="Numbered List">
+                    <i class="fas fa-list-ol"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="editor-content">
+            <div class="editor-main">
+                <div id="editor" class="editor" contenteditable="true" placeholder="Start typing your document..."></div>
+            </div>
+            <div class="editor-sidebar">
+                <div class="sidebar-section">
+                    <h4><i class="fas fa-users"></i> Active Users</h4>
+                    <div id="sidebarUsers"></div>
+                </div>
+                <div class="sidebar-section">
+                    <h4><i class="fas fa-history"></i> Document Versions</h4>
+                    <ul id="versionsList" class="version-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="createDocumentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateDocumentModal()">&times;</span>
+            <h2><i class="fas fa-file-alt"></i> Create New Document</h2>
+            <form id="createDocumentForm">
+                <div class="form-group">
+                    <label for="newDocumentTitle">Document Title</label>
+                    <input type="text" id="newDocumentTitle" required>
+                </div>
+                <button type="submit" class="btn">Create Document</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="shareDocumentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeShareDocumentModal()">&times;</span>
+            <h2><i class="fas fa-share-alt"></i> Share Document</h2>
+            <div id="shareMessage" class="success-message"></div>
+            <form id="shareDocumentForm">
+                <div class="form-group">
+                    <label for="shareUserInput">Username or Email</label>
+                    <input type="text" id="shareUserInput" placeholder="Enter username or email" required>
+                </div>
+                <div class="form-group">
+                    <label for="sharePermission">Permission</label>
+                    <select id="sharePermission" class="form-group input">
+                        <option value="write">Can Edit</option>
+                        <option value="read">Can View</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Share</button>
+            </form>
+            <div id="collaboratorsList">
+                <h4><i class="fas fa-users"></i> Current Collaborators</h4>
+                <ul id="currentCollaboratorsList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="statusIndicator" class="status-indicator" style="display: none;">
+        Connected
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <script>
+        // Global variables
+        let socket = null;
+        let currentUser = null;
+        let currentDocument = null;
+        let token = localStorage.getItem('token');
+        let saveTimeout = null;
+        let isTyping = false;
+
+        // Check if user is already logged in
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload.exp > Date.now() / 1000) {
+                    currentUser = payload;
+                    showDashboard();
+                } else {
+                    localStorage.removeItem('token');
+                }
+            } catch (e) {
+                localStorage.removeItem('token');
+            }
+        }
+
+        // Auth Functions
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            clearMessages();
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            clearMessages();
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Login
+        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', token);
+                    showSuccess('Login successful!');
+                    setTimeout(() => showDashboard(), 1000);
+                } else {
+                    showError(data.error || 'Login failed');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            }
+        });
+
+        // Register
+        document.getElementById('registerFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', token);
+                    showSuccess('Registration successful!');
+                    setTimeout(() => showDashboard(), 1000);
+                } else {
+                    showError(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            }
+        });
+
+        // Dashboard Functions
+        async function showDashboard() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('editorContainer').style.display = 'none';
+
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+
+            // Initialize Socket.IO
+            if (!socket) {
+                socket = io({
+                    auth: {
+                        token: token
+                    }
+                });
+
+                socket.on('connect', () => {
+                    updateStatus('Connected', 'success');
+                });
+
+                socket.on('disconnect', () => {
+                    updateStatus('Disconnected', 'error');
+                });
+            }
+
+            // Load documents
+            await loadDocuments();
+        }
+
+        async function loadDocuments() {
+            try {
+                const response = await fetch('/api/documents', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                const documents = await response.json();
+                const grid = document.getElementById('documentsGrid');
+                
+                // Clear existing documents (keep create button)
+                while (grid.children.length > 1) {
+                    grid.removeChild(grid.lastChild);
+                }
+
+                documents.forEach(doc => {
+                    const card = document.createElement('div');
+                    card.className = 'document-card';
+                    card.onclick = () => openDocument(doc.id);
+                    
+                    const docIdText = doc.id ? ` • ID: ${doc.id}` : '';
+                    const permissionText = doc.permission ? ` • ${doc.permission.charAt(0).toUpperCase() + doc.permission.slice(1)}` : '';
+                    
+                    card.innerHTML = `
+                        <h3>${doc.title}</h3>
+                        <div class="document-meta">
+                            <p><i class="fas fa-user"></i> ${doc.owner_name}</p>
+                            <p><i class="fas fa-clock"></i> ${new Date(doc.updated_at).toLocaleDateString()}</p>
+                            <p><i class="fas fa-key"></i> ID: ${doc.id}</p>
+                            ${doc.owner_id !== currentUser.userId ? `<p><i class="fas fa-user-friends"></i> Shared with you (${doc.permission})</p>` : ''}
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading documents:', error);
+            }
+        }
+        
+        async function openSharedDocument() {
+            const documentId = document.getElementById('sharedDocIdInput').value;
+            if (documentId) {
+                await openDocument(documentId);
+            } else {
+                alert('Please enter a document ID.');
+            }
+        }
+
+        // Document Functions
+        function showCreateDocumentModal() {
+            document.getElementById('createDocumentModal').style.display = 'block';
+        }
+
+        function closeCreateDocumentModal() {
+            document.getElementById('createDocumentModal').style.display = 'none';
+            document.getElementById('newDocumentTitle').value = '';
+        }
+        
+        function showShareDocumentModal() {
+            document.getElementById('shareDocumentModal').style.display = 'block';
+            loadCurrentCollaborators();
+        }
+
+        function closeShareDocumentModal() {
+            document.getElementById('shareDocumentModal').style.display = 'none';
+            document.getElementById('shareUserInput').value = '';
+            document.getElementById('shareMessage').style.display = 'none';
+        }
+
+        document.getElementById('createDocumentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('newDocumentTitle').value;
+
+            try {
+                const response = await fetch('/api/documents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ title }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    closeCreateDocumentModal();
+                    openDocument(data.id);
+                } else {
+                    alert('Error creating document: ' + data.error);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        });
+
+        document.getElementById('shareDocumentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameOrEmail = document.getElementById('shareUserInput').value;
+            const permission = document.getElementById('sharePermission').value;
+
+            try {
+                const response = await fetch(`/api/documents/${currentDocument.id}/share`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ usernameOrEmail, permission }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('shareMessage').textContent = data.message;
+                    document.getElementById('shareMessage').style.display = 'block';
+                    document.getElementById('shareUserInput').value = '';
+                    loadCurrentCollaborators(); // Refresh the collaborators list
+                } else {
+                    document.getElementById('shareMessage').textContent = data.error;
+                    document.getElementById('shareMessage').style.display = 'block';
+                    document.getElementById('shareMessage').style.backgroundColor = '#f8d7da';
+                    document.getElementById('shareMessage').style.color = '#721c24';
+                }
+            } catch (error) {
+                document.getElementById('shareMessage').textContent = 'Network error. Please try again.';
+                document.getElementById('shareMessage').style.display = 'block';
+                document.getElementById('shareMessage').style.backgroundColor = '#f8d7da';
+                document.getElementById('shareMessage').style.color = '#721c24';
+            }
+        });
+
+        async function loadCurrentCollaborators() {
+             try {
+                const response = await fetch(`/api/documents/${currentDocument.id}/collaborators`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                const collaborators = await response.json();
+                const list = document.getElementById('currentCollaboratorsList');
+                list.innerHTML = '';
+                
+                collaborators.forEach(collab => {
+                    const li = document.createElement('li');
+                    li.className = 'collaborator-item';
+                    li.innerHTML = `
+                        <span>${collab.username}</span>
+                        <span>${collab.permission}</span>
+                    `;
+                    list.appendChild(li);
+                });
+             } catch (error) {
+                console.error('Error loading collaborators:', error);
+             }
+        }
+
+        async function openDocument(documentId) {
+            try {
+                const response = await fetch(`/api/documents/${documentId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                const document = await response.json();
+
+                if (response.ok) {
+                    currentDocument = document;
+                    showEditor();
+                } else {
+                    alert('Error loading document: ' + document.error);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function showEditor() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('editorContainer').style.display = 'block';
+
+            // Set document content
+            document.getElementById('documentTitle').textContent = currentDocument.title;
+            document.getElementById('editor').innerHTML = currentDocument.content || '';
+
+            // Check and apply permissions
+            const isWritePermission = currentDocument.permission === 'write';
+            document.getElementById('editor').contentEditable = isWritePermission;
+            document.getElementById('documentTitle').contentEditable = isWritePermission;
+            document.getElementById('mainToolbar').style.display = isWritePermission ? 'flex' : 'none';
+            document.getElementById('shareButton').style.display = isWritePermission ? 'inline-block' : 'none';
+
+            // Join document room
+            socket.emit('join-document', currentDocument.id);
+
+            // Load document versions
+            loadDocumentVersions();
+
+            // Set up editor event listeners
+            setupEditorListeners();
+        }
+
+        function setupEditorListeners() {
+            const editor = document.getElementById('editor');
+            const titleElement = document.getElementById('documentTitle');
+
+            // Document content changes
+            editor.addEventListener('input', () => {
+                if (currentDocument.permission === 'write') {
+                    isTyping = true;
+                    updateStatus('Saving...', 'saving');
+
+                    // Emit real-time changes
+                    socket.emit('document-change', {
+                        documentId: currentDocument.id,
+                        content: editor.innerHTML
+                    });
+
+                    // Debounced save
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(async () => {
+                        await saveDocument();
+                        isTyping = false;
+                    }, 2000);
+                }
+            });
+
+            // Title changes
+            titleElement.addEventListener('blur', async () => {
+                if (currentDocument.permission === 'write') {
+                    const newTitle = titleElement.textContent;
+                    if (newTitle !== currentDocument.title) {
+                        currentDocument.title = newTitle;
+                        await saveDocument(newTitle);
+                    }
+                }
+            });
+
+            // Cursor position tracking
+            editor.addEventListener('selectionchange', () => {
+                if (currentDocument.permission === 'write') {
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        socket.emit('cursor-position', {
+                            documentId: currentDocument.id,
+                            position: {
+                                start: range.startOffset,
+                                end: range.endOffset
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        async function saveDocument(title = null) {
+            try {
+                const content = document.getElementById('editor').innerHTML;
+                const response = await fetch(`/api/documents/${currentDocument.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ 
+                        content,
+                        title: title 
+                    }),
+                });
+
+                if (response.ok) {
+                    updateStatus('Saved', 'success');
+                    setTimeout(() => {
+                        if (!isTyping) {
+                            document.getElementById('statusIndicator').style.display = 'none';
+                        }
+                    }, 2000);
+                } else {
+                    updateStatus('Save failed', 'error');
+                }
+            } catch (error) {
+                updateStatus('Save failed', 'error');
+            }
+        }
+
+        async function loadDocumentVersions() {
+            try {
+                const response = await fetch(`/api/documents/${currentDocument.id}/versions`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                const versions = await response.json();
+                const versionsList = document.getElementById('versionsList');
+                versionsList.innerHTML = '';
+
+                versions.forEach((version, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'version-item';
+                    li.onclick = () => loadVersion(version);
+                    
+                    li.innerHTML = `
+                        <div>Version ${version.version_number}</div>
+                        <div style="font-size: 0.8rem; color: #666;">
+                            ${version.created_by_name} • ${new Date(version.created_at).toLocaleDateString()}
+                        </div>
+                    `;
+                    
+                    versionsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading versions:', error);
+            }
+        }
+
+        function loadVersion(version) {
+            if (confirm(`Load version ${version.version_number}? This will replace the current content.`)) {
+                document.getElementById('editor').innerHTML = version.content;
+            }
+        }
+
+        // Socket.IO event listeners
+        socket?.on('document-change', (data) => {
+            if (data.userId !== currentUser.id) {
+                document.getElementById('editor').innerHTML = data.content;
+            }
+        });
+
+        socket?.on('user-joined', (user) => {
+            updateActiveUsers();
+        });
+
+        socket?.on('user-left', (user) => {
+            updateActiveUsers();
+        });
+
+        socket?.on('document-users', (users) => {
+            updateActiveUsers(users);
+        });
+
+        socket?.on('cursor-position', (data) => {
+            // Handle cursor position updates from other users
+            // This would require more complex implementation for visual cursors
+        });
+
+        function updateActiveUsers(users = []) {
+            const activeUsersContainer = document.getElementById('activeUsers');
+            const sidebarUsersContainer = document.getElementById('sidebarUsers');
+            
+            activeUsersContainer.innerHTML = '';
+            sidebarUsersContainer.innerHTML = '';
+
+            users.forEach(user => {
+                // Header active users
+                const userIndicator = document.createElement('div');
+                userIndicator.className = 'user-indicator online';
+                userIndicator.textContent = user.username.charAt(0).toUpperCase();
+                userIndicator.title = user.username;
+                activeUsersContainer.appendChild(userIndicator);
+
+                // Sidebar users
+                const userItem = document.createElement('div');
+                userItem.style.cssText = 'padding: 0.5rem; background: white; margin-bottom: 0.5rem; border-radius: 8px; font-size: 0.9rem;';
+                userItem.innerHTML = `
+                    <i class="fas fa-circle" style="color: #28a745; font-size: 0.7rem;"></i>
+                    ${user.username}
+                `;
+                sidebarUsersContainer.appendChild(userItem);
+            });
+        }
+
+        // Rich text formatting
+        function formatText(command, value = null) {
+            if (currentDocument.permission === 'write') {
+                document.execCommand(command, false, value);
+                document.getElementById('editor').focus();
+            }
+        }
+
+        function updateStatus(message, type) {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.textContent = message;
+            indicator.className = `status-indicator ${type}`;
+            indicator.style.display = 'block';
+        }
+
+        function backToDashboard() {
+            if (currentDocument) {
+                socket.emit('leave-document', currentDocument.id);
+            }
+            currentDocument = null;
+            showDashboard();
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+            currentUser = null;
+            currentDocument = null;
+            
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('editorContainer').style.display = 'none';
+            
+            showLoginForm();
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const createModal = document.getElementById('createDocumentModal');
+            const shareModal = document.getElementById('shareDocumentModal');
+            if (event.target == createModal) {
+                closeCreateDocumentModal();
+            }
+            if (event.target == shareModal) {
+                closeShareDocumentModal();
+            }
+        }
+
+        // Auto-save before leaving
+        window.addEventListener('beforeunload', () => {
+            if (isTyping && currentDocument && currentDocument.permission === 'write') {
+                saveDocument();
+            }
+        });
+    </script>
+</body>
+</html>
