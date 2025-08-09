@@ -65,6 +65,8 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=collaborative_editor
 JWT_SECRET=your_secret_key
+PORT=3000
+NODE_ENV=development
 ```
 
 Run the database setup script to create the necessary tables and sample data:
